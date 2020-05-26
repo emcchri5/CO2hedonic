@@ -6,7 +6,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(pacman)
-p_load(tidyverse, httr, lubridate, janitor, jsonlite, listviewer, usethis, rvest, data.table, xml2, readxl, here, dplyr, plotly, lubridate, naniar)
+p_load(tidyverse, httr, lubridate, janitor, jsonlite, listviewer, usethis, rvest, data.table, xml2, readxl, here, dplyr, plotly, lubridate, naniar, readr)
 ```
 
 ### Data Wrangling
@@ -15,37 +15,43 @@ p_load(tidyverse, httr, lubridate, janitor, jsonlite, listviewer, usethis, rvest
 #*note* the data was imported using the "import dataset" tab in Rstudio. 
 
 ```{r hydro}
-summary(hydro_co2)
+hydro_data <- readr::read_csv("/Users/EthanMcChristian/Desktop/hydro_co2.csv")
+
+
 ```
 
 ## Cleaning column names
 
 
 ```{r names, echo=TRUE}
-hydro_co2 <- clean_names(hydro_co2)
-hydro_co2 <- 
-  hydro_co2 %>%
+hydro_data <- clean_names(hydro_data)
+hydro_data
+```
+```{r}
+hydro_data <- 
+  hydro_data %>%
   rename(
  co2_percap = co2_emissions_metric_tons_per_capita_en_atm_co2e_pc,
- perc_elec = access_to_electricity_of_population_eg_elc_accs_zs,
+ perc_elec = access_to_electricity_percent_of_population_eg_elc_accs_zs,
  gni_percap = gni_per_capita_atlas_method_current_us_ny_gnp_pcap_cd,
  co2_emission = co2_emissions_kt_en_atm_co2e_kt,
- perc_co2_gaseous = co2_emissions_from_gaseous_fuel_consumption_of_total_en_atm_co2e_gf_zs,
- perc_co2_solid_fuel = co2_emissions_from_solid_fuel_consumption_of_total_en_atm_co2e_sf_zs,
- perc_co2_liquid_fuel = co2_emissions_from_liquid_fuel_consumption_of_total_en_atm_co2e_lf_zs,
+ perc_co2_gaseous = co2_emissions_from_gaseous_fuel_consumption_percent_of_total_en_atm_co2e_gf_zs,
+ perc_co2_solid_fuel = co2_emissions_from_solid_fuel_consumption_percent_of_total_en_atm_co2e_sf_zs,
+ perc_co2_liquid_fuel = co2_emissions_from_liquid_fuel_consumption_percent_of_total_en_atm_co2e_lf_zs,
  co2_methane_equiv.energy_sector = methane_emissions_in_energy_sector_thousand_metric_tons_of_co2_equivalent_en_atm_meth_eg_kt_ce,
  co2_methane_equiv.agriculture = agricultural_methane_emissions_thousand_metric_tons_of_co2_equivalent_en_atm_meth_ag_kt_ce,
  co2_total_greenhouse_equiv = total_greenhouse_gas_emissions_kt_of_co2_equivalent_en_atm_ghgt_kt_ce,
- perc_safe_water = hydro_electric_perc,
- hydro_electric_perc = <div>electricity_production_from_hydroelectric_sources_of_total_eg_elc_hyro_zs,
- coal_electric_perc = electricity_production_from_coal_sources_of_total_eg_elc_coal_zs,
- natural_gas_electric_perc = electricity_production_from_natural_gas_sources_of_total_eg_elc_ngas_zs,
- nuclear_electric_perc = electricity_production_from_nuclear_sources_of_total_eg_elc_nucl_zs,
- oil_gas_coal_electric_perc = electricity_production_from_oil_gas_and_coal_sources_of_total_eg_elc_fosl_zs,
- renewable_electric_nohydro_perc = electricity_production_from_renewable_sources_excluding_hydroelectric_of_total_eg_elc_rnwx_zs,
+ perc_safe_water = people_using_safely_managed_drinking_water_services_percent_of_population_sh_h2o_smdw_zs,
+ hydro_electric_perc = electricity_production_from_hydroelectric_sources_percent_of_total_eg_elc_hyro_zs,
+ coal_electric_perc = electricity_production_from_coal_sources_percent_of_total_eg_elc_coal_zs,
+ natural_gas_electric_perc = electricity_production_from_natural_gas_sources_percent_of_total_eg_elc_ngas_zs,
+ nuclear_electric_perc = electricity_production_from_nuclear_sources_percent_of_total_eg_elc_nucl_zs,
+ oil_gas_coal_electric_perc = electricity_production_from_oil_gas_and_coal_sources_percent_of_total_eg_elc_fosl_zs,
+ renewable_electric_nohydro_perc = electricity_production_from_renewable_sources_excluding_hydroelectric_percent_of_total_eg_elc_rnwx_zs,
  electric_consumption_percap = electric_power_consumption_k_wh_per_capita_eg_use_elec_kh_pc,
  pop = population_total_sp_pop_totl
   )
+hydro_data
 ```
 
 # Fixing my name mistakes
@@ -60,7 +66,7 @@ hydro_co2 <- hydro_co2 %>%
 ## Deleting all rows with NA files in a new dataframe
 # Replacing all ".." with NA's
 ```{r}
-hydro_co2_na <- hydro_co2 %>%
+hydro_data <- hydro_data %>%
   mutate(co2_percap = na_if(co2_percap, "..")) %>%
   mutate(perc_elec = na_if(perc_elec, "..")) %>%
   mutate(gni_percap = na_if(gni_percap, "..")) %>%
@@ -68,8 +74,8 @@ hydro_co2_na <- hydro_co2 %>%
   mutate(perc_co2_gaseous = na_if(perc_co2_gaseous, "..")) %>%
   mutate(perc_co2_solid_fuel = na_if(perc_co2_solid_fuel, "..")) %>%
   mutate(perc_co2_liquid_fuel = na_if(perc_co2_liquid_fuel, "..")) %>%
-  mutate(co2_methane_equiv_energy_sector = na_if(co2_methane_equiv_energy_sector, "..")) %>%
-  mutate(co2_methane_equiv_agriculture = na_if(co2_methane_equiv_agriculture, "..")) %>%
+  mutate(co2_methane_equiv.energy_sector = na_if(co2_methane_equiv.energy_sector, "..")) %>%
+  mutate(co2_methane_equiv.agriculture = na_if(co2_methane_equiv.agriculture, "..")) %>%
   mutate(co2_total_greenhouse_equiv = na_if(co2_total_greenhouse_equiv, "..")) %>%
   mutate(perc_safe_water = na_if(perc_safe_water, "..")) %>%
   mutate(hydro_electric_perc = na_if(hydro_electric_perc, "..")) %>%
@@ -84,11 +90,11 @@ hydro_co2_na <- hydro_co2 %>%
 ```
 # Deleting all rows with NA's, converting all factor variables to numeric
 ```{r}
-hydro_co2_complete <- hydro_co2_na[complete.cases(hydro_co2_na), ]
-mutate_if(hydro_co2_complete, is.factor, ~as.character(levels(.x))[.x])
+hydro_data_subset <- hydro_data[complete.cases(hydro_data), ]
+hydro_data_subset
 ```
 ```{r}
-hydro_co2_complete <- hydro_co2_complete %>%
+hydro_data_subnum <- hydro_data_subset %>%
   mutate(co2_percap = as.numeric(co2_percap)) %>%
   mutate(perc_elec = as.numeric(perc_elec) %>%
   mutate(gni_percap = as.numeric(gni_percap)) %>%
@@ -109,9 +115,10 @@ hydro_co2_complete <- hydro_co2_complete %>%
   mutate(electric_consumption_percap = as.numeric(electric_consumption_percap)) %>%
   mutate(pop = as.numeric(pop))
 ```
-NOTE: the data set has shrunk from 3965 observations to only 390, which means we deleted a LOT there. With this newer model, we have certaintly introduced selection (or reporting) bias. This means that countries that did not report any number of inputs is not counted in the regression. Are the countries who did not report a value more likely to have illecit greenhouse gas emissions taking place?
+NOTE: the data set has shrunk from 3965 observations to only 385, which means we deleted a LOT there. With this newer model, we have certaintly introduced selection (or reporting) bias. This means that countries that did not report any number of inputs is not counted in the regression. Are the countries who did not report a value more likely to have illecit greenhouse gas emissions taking place?
 ## Running a fun little regression, just to see
 ```{r}
-reg1 <- lm(co2_total_greenhouse_equiv ~ hydro_electric_perc + pop, data = hydro_co2_complete)
+reg1 <- lm(co2_total_greenhouse_equiv ~ hydro_electric_perc + pop, data = hydro_data_subset)
+summary(reg1)
 ```
 
