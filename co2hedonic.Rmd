@@ -6,7 +6,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(pacman)
-p_load(tidyverse, httr, lubridate, janitor, jsonlite, listviewer, usethis, rvest, data.table, xml2, readxl, here, dplyr, plotly, lubridate, naniar, readr)
+p_load(tidyverse, httr, lubridate, janitor, jsonlite, listviewer, usethis, rvest, data.table, xml2, readxl, here, dplyr, plotly, lubridate, naniar, readr, broom)
 ```
 
 ### Data Wrangling
@@ -96,14 +96,14 @@ hydro_data_subset
 ```{r}
 hydro_data_subnum <- hydro_data_subset %>%
   mutate(co2_percap = as.numeric(co2_percap)) %>%
-  mutate(perc_elec = as.numeric(perc_elec) %>%
+  mutate(perc_elec = as.numeric(perc_elec)) %>%
   mutate(gni_percap = as.numeric(gni_percap)) %>%
   mutate(co2_emission = as.numeric(co2_emission)) %>%
   mutate(perc_co2_gaseous = as.numeric(perc_co2_gaseous)) %>%
   mutate(perc_co2_solid_fuel = as.numeric(perc_co2_solid_fuel)) %>%
   mutate(perc_co2_liquid_fuel = as.numeric(perc_co2_liquid_fuel)) %>%
-  mutate(co2_methane_equiv_energy_sector = as.numeric(co2_methane_equiv_energy_sector)) %>%
-  mutate(co2_methane_equiv_agriculture = as.numeric(co2_methane_equiv_agriculture)) %>%
+  mutate(co2_methane_equiv.energy_sector = as.numeric(co2_methane_equiv.energy_sector)) %>%
+  mutate(co2_methane_equiv.agriculture = as.numeric(co2_methane_equiv.agriculture)) %>%
   mutate(co2_total_greenhouse_equiv = as.numeric(co2_total_greenhouse_equiv)) %>%
   mutate(perc_safe_water = as.numeric(perc_safe_water)) %>%
   mutate(hydro_electric_perc = as.numeric(hydro_electric_perc)) %>%
@@ -116,9 +116,17 @@ hydro_data_subnum <- hydro_data_subset %>%
   mutate(pop = as.numeric(pop))
 ```
 NOTE: the data set has shrunk from 3965 observations to only 385, which means we deleted a LOT there. With this newer model, we have certaintly introduced selection (or reporting) bias. This means that countries that did not report any number of inputs is not counted in the regression. Are the countries who did not report a value more likely to have illecit greenhouse gas emissions taking place?
+
+## time to convert my "time" values to time series data
+```{r}
+hydro_data_subnum <- hydro_data_subnum %>%
+  mutate(time = as.character(time))
+hydro_data_subnum_date <- hydro_data_subnum %>%
+  mutate(time = as.Date(time, "%Y"))
+```
 ## Running a fun little regression, just to see
 ```{r}
-reg1 <- lm(co2_total_greenhouse_equiv ~ hydro_electric_perc + pop, data = hydro_data_subset)
-summary(reg1)
+reg1 <- lm(log(co2_total_greenhouse_equiv) ~ hydro_electric_perc + log(pop), data = hydro_data_subnum_date)
+tidy(reg1)
 ```
 
