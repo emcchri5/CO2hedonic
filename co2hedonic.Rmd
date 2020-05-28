@@ -129,4 +129,26 @@ hydro_data_subnum_date <- hydro_data_subnum %>%
 reg1 <- lm(log(co2_total_greenhouse_equiv) ~ hydro_electric_perc + log(pop), data = hydro_data_subnum_date)
 tidy(reg1)
 ```
+## Adding a "percapital greenhouse gas emissions in kt of co2 equivalent" column. 
+```{r}
+hydro_data_new <- hydro_data_subnum_date %>%
+  mutate(percap_greenhouse = co2_total_greenhouse_equiv/pop)
+hydro_data_new
+```
+## Filtering data by middle income countries (UN World Economic Situation and Prospects) and by countries with access to drinking water equal to or above the world average. 
+```{r}
+hydro_data_new2 <-hydro_data_new %>%
+  filter(gni_percap >= 996) %>%
+  filter(perc_safe_water >= (530/7.9))
+hydro_data_choice <- hydro_data_new2 %>%
+  filter(country_name %in% c("Central Europe and the Baltics", "Euro Area", "Europe and Central Asia", "Europe and Central Asia (excluding high income)", "Europe and Central Asia (IDA and IBRD countries)",  "European Union", "High income", "North America", "OECD members", "Post-demographic dividend"))
 
+```
+```{r}
+reg2 <- lm(percap_greenhouse ~ hydro_electric_perc + coal_electric_perc + nuclear_electric_perc + natural_gas_electric_perc + oil_gas_coal_electric_perc + renewable_electric_nohydro_perc + log(electric_consumption_percap) + log(pop), data = hydro_data_new2)
+tidy(reg2)
+
+ggplot(data = hydro_data_new2, aes(x = hydro_electric_perc, y = co2_total_greenhouse_equiv)) + 
+       geom_line() + 
+       geom_point(alpha = .5)
+```
