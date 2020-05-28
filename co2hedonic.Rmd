@@ -1,5 +1,7 @@
 ---
-title: "HydroCO2"
+title: "Hydroelectric Energy and Greenhouse Gas Emissions"
+author: "Ethan McChristian"
+date: "`r format(Sys.time(), '%d %B %Y')`"
 output: html_document
 ---
 
@@ -9,19 +11,19 @@ library(pacman)
 p_load(tidyverse, httr, lubridate, janitor, jsonlite, listviewer, usethis, rvest, data.table, xml2, readxl, here, dplyr, plotly, lubridate, naniar, readr, broom)
 ```
 
-### Data Wrangling
+### This model uses data from the World Data Bank from 2005-2020 to test the relationship between countries that produce more hydroelectric energy (percentage of total energy production) and their percapita greenhouse gas emissions, in kilotonnes of carbon dioxide equivalent. As you will see later on, the data from 2008-2020 is not complete and therefore is excluded from the model. This is my first independent regression and therefore, I welcome any and all criticisms. If you see this model and have are abhorred by methods, please reach out and tell me what I could've done better. 
 
-## Importing the data, summarizing
-#*note* the data was imported using the "import dataset" tab in Rstudio. 
+
+# Data Wrangling
+
+### Importing the data, summarizing
+ 
 
 ```{r hydro}
 hydro_data <- readr::read_csv("/Users/EthanMcChristian/Desktop/hydro_co2.csv")
-
-
 ```
 
-## Cleaning column names
-
+### Cleaning column names
 
 ```{r names, echo=TRUE}
 hydro_data <- clean_names(hydro_data)
@@ -54,17 +56,7 @@ hydro_data <-
 hydro_data
 ```
 
-# Fixing my name mistakes
-```{r}
-hydro_co2 <- hydro_co2 %>%
-  rename(
-    perc_safe_water = hydro_electric_perc,
-    hydro_electric_perc = electricity_production_from_hydroelectric_sources_of_total_eg_elc_hyro_zs
-  )
-```
-
-## Deleting all rows with NA files in a new dataframe
-# Replacing all ".." with NA's
+### Replacing all ".." with NA's
 ```{r}
 hydro_data <- hydro_data %>%
   mutate(co2_percap = na_if(co2_percap, "..")) %>%
@@ -88,7 +80,7 @@ hydro_data <- hydro_data %>%
   mutate(pop = na_if(pop, ".."))
 
 ```
-# Deleting all rows with NA's, converting all factor variables to numeric
+### Deleting all rows with NA's, converting all character variables to numeric
 ```{r}
 hydro_data_subset <- hydro_data[complete.cases(hydro_data), ]
 hydro_data_subset
@@ -117,38 +109,84 @@ hydro_data_subnum <- hydro_data_subset %>%
 ```
 NOTE: the data set has shrunk from 3965 observations to only 385, which means we deleted a LOT there. With this newer model, we have certaintly introduced selection (or reporting) bias. This means that countries that did not report any number of inputs is not counted in the regression. Are the countries who did not report a value more likely to have illecit greenhouse gas emissions taking place?
 
-## time to convert my "time" values to time series data
+### Converting my "time" values to time series data
 ```{r}
 hydro_data_subnum <- hydro_data_subnum %>%
   mutate(time = as.character(time))
 hydro_data_subnum_date <- hydro_data_subnum %>%
   mutate(time = as.Date(time, "%Y"))
 ```
-## Running a fun little regression, just to see
-```{r}
-reg1 <- lm(log(co2_total_greenhouse_equiv) ~ hydro_electric_perc + log(pop), data = hydro_data_subnum_date)
-tidy(reg1)
-```
-## Adding a "percapital greenhouse gas emissions in kt of co2 equivalent" column. 
+
+### Adding a "percapital greenhouse gas emissions in kt of co2 equivalent" column. 
 ```{r}
 hydro_data_new <- hydro_data_subnum_date %>%
   mutate(percap_greenhouse = co2_total_greenhouse_equiv/pop)
 hydro_data_new
 ```
-## Filtering data by middle income countries (UN World Economic Situation and Prospects) and by countries with access to drinking water equal to or above the world average. 
+
+### Filtering data by middle income countries (UN World Economic Situation and Prospects) and by countries with access to drinking water equal to or above the world average. 
 ```{r}
 hydro_data_new2 <-hydro_data_new %>%
   filter(gni_percap >= 996) %>%
   filter(perc_safe_water >= (530/7.9))
 hydro_data_choice <- hydro_data_new2 %>%
-  filter(country_name %in% c("Central Europe and the Baltics", "Euro Area", "Europe and Central Asia", "Europe and Central Asia (excluding high income)", "Europe and Central Asia (IDA and IBRD countries)",  "European Union", "High income", "North America", "OECD members", "Post-demographic dividend"))
+  filter(country_name != "Central Europe and the Baltics" & country_name != "Euro Area" & country_name != "Europe and Central Asia" & country_name != "Europe and Central Asia (excluding high income)" & country_name != "Europe and Central Asia (IDA and IBRD countries)" & country_name != "European Union" & country_name != "High income" & country_name != "North America" & country_name != "OECD members" & country_name != "Post-demographic dividend")
 
+```
+
+# Tests, coefficients, and relationships
+
+### Running a hedonic model to test the relationship between percent hydroelectric energy production and percapita greenhouse gas emissions in kilotonnes (1000kg) of co2 equivalent. H0: B1 = 0. HA: B1 != 0. 
+```{r}
+reg2 <- lm(percap_greenhouse ~ hydro_electric_perc + coal_electric_perc + nuclear_electric_perc + natural_gas_electric_perc + oil_gas_coal_electric_perc + renewable_electric_nohydro_perc + log(electric_consumption_percap) + log(pop) + perc_elec, data = hydro_data_choice)
+tidy(reg2)
+```
+### For visual ques, we're mapping the relationship between percent of total energy production accounted for by hydroelectric energy. 
+```{r}
+ggplot(data = hydro_data_choice, aes(x = hydro_electric_perc, y = percap_greenhouse, color = pop)) + 
+       geom_line() + 
+       geom_point(alpha = .5) +
+  scale_y_log10()
+```
+
+### The p-value from our regression is not significant at the at the %% level, which means that we fail to reject our null hypothesis, in other words we fail to conclude that hydroelectric energy percantage has a significant impact on percapita greenhouse gas emissions. Our evidence - World Bank Data data from 2005-2008 and in countries that are middle-income or higher and have access to clean drinking water - does not indicate that hydroelecric energy has a significant impact on  percapita greenhouse gas emissions.
+
+### Some interesting notes from these regressions are: other renewable energies, excluding hydroelectric energy, have a significant impact on percapita greenhouse gas emissions at the 1% level. Nuclear energy does not have a significant impact on percapita greenhouse gas emissions at the % level, which calls to question the integrity of the model. The two most significant variables were electric consumption percapita, percentage of energy production from natural gas, and percentage of energy production from renewable's excluding hydroelectric (all graphed below). 
+
+```{r}
+ggplot(data = hydro_data_choice, aes(x = electric_consumption_percap, y = percap_greenhouse, color = pop)) +
+  geom_point(alpha = .3) + 
+  geom_line(alpha = .5) +
+  scale_y_log10() +
+  scale_x_log10()
 ```
 ```{r}
-reg2 <- lm(percap_greenhouse ~ hydro_electric_perc + coal_electric_perc + nuclear_electric_perc + natural_gas_electric_perc + oil_gas_coal_electric_perc + renewable_electric_nohydro_perc + log(electric_consumption_percap) + log(pop), data = hydro_data_new2)
-tidy(reg2)
-
-ggplot(data = hydro_data_new2, aes(x = hydro_electric_perc, y = co2_total_greenhouse_equiv)) + 
-       geom_line() + 
-       geom_point(alpha = .5)
+ggplot(data = hydro_data_choice, aes(x = natural_gas_electric_perc, y = percap_greenhouse, color = pop)) +
+  geom_point(alpha = .3) + 
+  geom_line(alpha = .5) +
+  scale_y_log10() 
 ```
+
+```{r}
+ggplot(data = hydro_data_choice, aes(x = renewable_electric_nohydro_perc, y = percap_greenhouse, color = pop)) +
+  geom_point(alpha = .3) + 
+  geom_line(alpha = .5) +
+  scale_y_log10()
+```
+
+### One final interesting note is the percentage of people who have access to electricity has a negative estimate and is significant at the 5% level. This might suggest a flawed model, or something else. To get a better idea, a graph is shown below. 
+```{r}
+ggplot(data = hydro_data_choice, aes(x = perc_elec, y = percap_greenhouse, color = pop)) +
+  geom_point(alpha = .3) + 
+  geom_line(alpha = .5) +
+  scale_y_log10() +
+  scale_x_log10()
+```
+
+
+
+### The graph sheds some light onto this relationship. In a linear model, endogeneity (or error term correlating with X term) violates OLS assumptions and leads us to believe that this model is not well fit for testing the relationship between these two variables. 
+
+
+
+
