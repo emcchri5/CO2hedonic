@@ -149,7 +149,7 @@ ggplot(data = hydro_data_choice, aes(x = hydro_electric_perc, y = percap_greenho
   scale_y_log10()
 ```
 
-### The p-value from our regression is not significant at the at the 5% level, which means that we fail to reject our null hypothesis, in other words we fail to conclude that hydroelectric energy percantage has a significant impact on percapita greenhouse gas emissions. Our evidence - World Bank Data data from 2005-2008 and in countries that are middle-income or higher and have access to clean drinking water - does not indicate that hydroelecric energy has a significant impact on  percapita greenhouse gas emissions.
+### The p-value from our regression is not significant at the at the 5% level, which means that we fail to reject our null hypothesis, in other words we fail to conclude that hydroelectric energy percentage has a significant impact on percapita greenhouse gas emissions. Our evidence - World Bank Data data from 2005-2008 and in countries that are middle-income or higher and have access to clean drinking water - does not indicate that hydroelecric energy has a significant impact on  percapita greenhouse gas emissions.
 
 ### Some interesting notes from these regressions are: other renewable energies, excluding hydroelectric energy, have a significant impact on percapita greenhouse gas emissions at the 1% level. Nuclear energy does not have a significant impact on percapita greenhouse gas emissions at the % level, which calls to question the integrity of the model. The two most significant variables were electric consumption percapita, percentage of energy production from natural gas, and percentage of energy production from renewable's excluding hydroelectric (all graphed below). 
 
