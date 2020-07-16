@@ -11,7 +11,7 @@
 
 <meta name="author" content="Ethan McChristian" />
 
-<meta name="date" content="2020-05-28" />
+<meta name="date" content="2020-06-08" />
 
 <title>Hydroelectric Energy and Greenhouse Gas Emissions</title>
 
@@ -365,13 +365,13 @@ summary {
 
 <h1 class="title toc-ignore">Hydroelectric Energy and Greenhouse Gas Emissions</h1>
 <h4 class="author">Ethan McChristian</h4>
-<h4 class="date">28 May 2020</h4>
+<h4 class="date">08 June 2020</h4>
 
 </div>
 
 
-<div id="this-model-uses-data-from-the-world-data-bank-from-2005-2020-to-test-the-relationship-between-countries-that-produce-more-hydroelectric-energy-percentage-of-total-energy-production-and-their-percapita-greenhouse-gas-emissions-in-kilotonnes-of-carbon-dioxide-equivalent.-as-you-will-see-later-on-the-data-from-2008-2020-is-not-complete-and-therefore-is-excluded-from-the-model.-this-is-my-first-independent-regression-and-therefore-i-welcome-any-and-all-criticisms.-if-you-see-this-model-and-have-are-abhorred-by-methods-please-reach-out-and-tell-me-what-i-couldve-done-better." class="section level3">
-<h3>This model uses data from the World Data Bank from 2005-2020 to test the relationship between countries that produce more hydroelectric energy (percentage of total energy production) and their percapita greenhouse gas emissions, in kilotonnes of carbon dioxide equivalent. As you will see later on, the data from 2008-2020 is not complete and therefore is excluded from the model. This is my first independent regression and therefore, I welcome any and all criticisms. If you see this model and have are abhorred by methods, please reach out and tell me what I could’ve done better.</h3>
+<div id="this-model-uses-data-from-the-world-data-bank-from-2005-2020-to-test-the-relationship-between-countries-that-produce-more-hydroelectric-energy-percentage-of-total-energy-production-and-their-percapita-greenhouse-gas-emissions-in-kilotonnes-of-carbon-dioxide-equivalent.-as-you-will-see-later-on-the-data-from-2008-2020-is-not-complete-and-therefore-is-excluded-from-the-model.-this-is-my-first-independent-regression-and-therefore-i-welcome-any-and-all-criticisms.-if-you-see-this-model-and-are-abhorred-by-methods-please-reach-out-and-tell-me-what-i-couldve-done-better." class="section level3">
+<h3>This model uses data from the World Data Bank from 2005-2020 to test the relationship between countries that produce more hydroelectric energy (percentage of total energy production) and their percapita greenhouse gas emissions, in kilotonnes of carbon dioxide equivalent. As you will see later on, the data from 2008-2020 is not complete and therefore is excluded from the model. This is my first independent regression and therefore, I welcome any and all criticisms. If you see this model and are abhorred by methods, please reach out and tell me what I could’ve done better.</h3>
 </div>
 <div id="data-wrangling" class="section level1">
 <h1>Data Wrangling</h1>
@@ -538,7 +538,7 @@ hydro_data_subset</code></pre>
   mutate(renewable_electric_nohydro_perc = as.numeric(renewable_electric_nohydro_perc)) %&gt;%
   mutate(electric_consumption_percap = as.numeric(electric_consumption_percap)) %&gt;%
   mutate(pop = as.numeric(pop))</code></pre>
-<p>NOTE: the data set has shrunk from 3965 observations to only 385, which means we deleted a LOT there. With this newer model, we have certaintly introduced selection (or reporting) bias. This means that countries that did not report any number of inputs is not counted in the regression. Are the countries who did not report a value more likely to have illecit greenhouse gas emissions taking place?</p>
+<p>NOTE: the data set has shrunk from 3965 observations to only 385, which means we deleted a LOT there. With this newer model, we have certaintly introduced selection (or reporting) bias. This means that countries that did not report any number of inputs is not counted in the regression. Are the countries who did not report a value more likely to have illicit greenhouse gas emissions taking place?</p>
 </div>
 <div id="converting-my-time-values-to-time-series-data" class="section level3">
 <h3>Converting my “time” values to time series data</h3>
@@ -555,16 +555,16 @@ hydro_data_new</code></pre>
 <pre><code>## # A tibble: 385 x 24
 ##    time       time_code country_name country_code co2_percap perc_elec
 ##    &lt;date&gt;     &lt;chr&gt;     &lt;chr&gt;        &lt;chr&gt;             &lt;dbl&gt;     &lt;dbl&gt;
-##  1 2005-05-28 YR2005    Armenia      ARM               1.46       99.8
-##  2 2005-05-28 YR2005    Austria      AUT               9.02      100  
-##  3 2005-05-28 YR2005    Azerbaijan   AZE               4.09       99.3
-##  4 2005-05-28 YR2005    Bahrain      BHR              21.6       100  
-##  5 2005-05-28 YR2005    Bangladesh   BGD               0.284      44.2
-##  6 2005-05-28 YR2005    Belarus      BLR               6.12      100  
-##  7 2005-05-28 YR2005    Belgium      BEL              10.4       100  
-##  8 2005-05-28 YR2005    Bosnia and … BIH               4.30      100  
-##  9 2005-05-28 YR2005    Bulgaria     BGR               6.26      100  
-## 10 2005-05-28 YR2005    Cambodia     KHM               0.209      20.5
+##  1 2005-06-08 YR2005    Armenia      ARM               1.46       99.8
+##  2 2005-06-08 YR2005    Austria      AUT               9.02      100  
+##  3 2005-06-08 YR2005    Azerbaijan   AZE               4.09       99.3
+##  4 2005-06-08 YR2005    Bahrain      BHR              21.6       100  
+##  5 2005-06-08 YR2005    Bangladesh   BGD               0.284      44.2
+##  6 2005-06-08 YR2005    Belarus      BLR               6.12      100  
+##  7 2005-06-08 YR2005    Belgium      BEL              10.4       100  
+##  8 2005-06-08 YR2005    Bosnia and … BIH               4.30      100  
+##  9 2005-06-08 YR2005    Bulgaria     BGR               6.26      100  
+## 10 2005-06-08 YR2005    Cambodia     KHM               0.209      20.5
 ## # … with 375 more rows, and 18 more variables: gni_percap &lt;dbl&gt;,
 ## #   co2_emission &lt;dbl&gt;, perc_co2_gaseous &lt;dbl&gt;, perc_co2_solid_fuel &lt;dbl&gt;,
 ## #   perc_co2_liquid_fuel &lt;dbl&gt;, co2_methane_equiv.energy_sector &lt;dbl&gt;,
@@ -588,20 +588,59 @@ hydro_data_choice &lt;- hydro_data_new2 %&gt;%
 <div id="running-a-hedonic-model-to-test-the-relationship-between-percent-hydroelectric-energy-production-and-percapita-greenhouse-gas-emissions-in-kilotonnes-1000kg-of-co2-equivalent.-h0-b1-0.-ha-b1-0." class="section level3">
 <h3>Running a hedonic model to test the relationship between percent hydroelectric energy production and percapita greenhouse gas emissions in kilotonnes (1000kg) of co2 equivalent. H0: B1 = 0. HA: B1 != 0.</h3>
 <pre class="r"><code>reg2 &lt;- lm(percap_greenhouse ~ hydro_electric_perc + coal_electric_perc + nuclear_electric_perc + natural_gas_electric_perc + oil_gas_coal_electric_perc + renewable_electric_nohydro_perc + log(electric_consumption_percap) + log(pop) + perc_elec, data = hydro_data_choice)
-tidy(reg2)</code></pre>
-<pre><code>## # A tibble: 10 x 5
-##    term                               estimate std.error statistic  p.value
-##    &lt;chr&gt;                                 &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
-##  1 (Intercept)                       0.226     0.0783         2.89 4.22e- 3
-##  2 hydro_electric_perc              -0.0000650 0.0000379     -1.71 8.78e- 2
-##  3 coal_electric_perc                0.0000336 0.0000277      1.21 2.26e- 1
-##  4 nuclear_electric_perc            -0.0000797 0.0000413     -1.93 5.47e- 2
-##  5 natural_gas_electric_perc         0.000120  0.0000251      4.78 3.21e- 6
-##  6 oil_gas_coal_electric_perc       -0.0000412 0.0000399     -1.03 3.03e- 1
-##  7 renewable_electric_nohydro_perc  -0.000367  0.0000868     -4.23 3.40e- 5
-##  8 log(electric_consumption_percap)  0.00981   0.000748      13.1  1.37e-29
-##  9 log(pop)                         -0.000429  0.000274      -1.56 1.20e- 1
-## 10 perc_elec                        -0.00290   0.000812      -3.57 4.35e- 4</code></pre>
+summary(reg2)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = percap_greenhouse ~ hydro_electric_perc + coal_electric_perc + 
+##     nuclear_electric_perc + natural_gas_electric_perc + oil_gas_coal_electric_perc + 
+##     renewable_electric_nohydro_perc + log(electric_consumption_percap) + 
+##     log(pop) + perc_elec, data = hydro_data_choice)
+## 
+## Residuals:
+##       Min        1Q    Median        3Q       Max 
+## -0.013165 -0.003418 -0.000344  0.002355  0.038001 
+## 
+## Coefficients:
+##                                    Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                       2.263e-01  7.828e-02   2.890 0.004223 ** 
+## hydro_electric_perc              -6.502e-05  3.792e-05  -1.715 0.087796 .  
+## coal_electric_perc                3.359e-05  2.770e-05   1.213 0.226484    
+## nuclear_electric_perc            -7.968e-05  4.126e-05  -1.931 0.054729 .  
+## natural_gas_electric_perc         1.199e-04  2.511e-05   4.776 3.21e-06 ***
+## oil_gas_coal_electric_perc       -4.120e-05  3.992e-05  -1.032 0.303126    
+## renewable_electric_nohydro_perc  -3.670e-04  8.677e-05  -4.230 3.40e-05 ***
+## log(electric_consumption_percap)  9.806e-03  7.483e-04  13.105  &lt; 2e-16 ***
+## log(pop)                         -4.288e-04  2.744e-04  -1.562 0.119573    
+## perc_elec                        -2.899e-03  8.120e-04  -3.570 0.000435 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.006336 on 227 degrees of freedom
+## Multiple R-squared:  0.5628, Adjusted R-squared:  0.5455 
+## F-statistic: 32.47 on 9 and 227 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div id="regressing-percap_greenhouse-without-other-independent-variables" class="section level3">
+<h3>Regressing percap_greenhouse without other independent variables</h3>
+<pre class="r"><code>reg1 &lt;- lm(percap_greenhouse ~ hydro_electric_perc, data = hydro_data_choice)
+summary(reg1)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = percap_greenhouse ~ hydro_electric_perc, data = hydro_data_choice)
+## 
+## Residuals:
+##       Min        1Q    Median        3Q       Max 
+## -0.011039 -0.004398 -0.002929  0.001789  0.056610 
+## 
+## Coefficients:
+##                       Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)          1.433e-02  7.567e-04  18.933  &lt; 2e-16 ***
+## hydro_electric_perc -8.105e-05  2.267e-05  -3.574 0.000426 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.009173 on 235 degrees of freedom
+## Multiple R-squared:  0.05156,    Adjusted R-squared:  0.04753 
+## F-statistic: 12.78 on 1 and 235 DF,  p-value: 0.000426</code></pre>
 </div>
 <div id="for-visual-ques-were-mapping-the-relationship-between-percent-of-total-energy-production-accounted-for-by-hydroelectric-energy." class="section level3">
 <h3>For visual ques, we’re mapping the relationship between percent of total energy production accounted for by hydroelectric energy.</h3>
@@ -644,6 +683,60 @@ tidy(reg2)</code></pre>
 </div>
 <div id="the-graph-sheds-some-light-onto-this-relationship.-in-a-linear-model-endogeneity-or-error-term-correlating-with-x-term-violates-ols-assumptions-and-leads-us-to-believe-that-this-model-is-not-well-fit-for-testing-the-relationship-between-these-two-variables." class="section level3">
 <h3>The graph sheds some light onto this relationship. In a linear model, endogeneity (or error term correlating with X term) violates OLS assumptions and leads us to believe that this model is not well fit for testing the relationship between these two variables.</h3>
+<pre class="r"><code>hydro_norway_us &lt;- hydro_data_subset %&gt;%
+filter(country_name == &quot;Norway&quot;)
+hydro_norway_us</code></pre>
+<pre><code>## # A tibble: 4 x 23
+##    time time_code country_name country_code co2_percap perc_elec gni_percap
+##   &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;        &lt;chr&gt;        &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;     
+## 1  2005 YR2005    Norway       NOR          9.1792169… 100       63790     
+## 2  2006 YR2006    Norway       NOR          9.4958356… 100       69990     
+## 3  2007 YR2007    Norway       NOR          9.5748496… 100       78500     
+## 4  2008 YR2008    Norway       NOR          11.679583… 100       87520     
+## # … with 16 more variables: co2_emission &lt;chr&gt;, perc_co2_gaseous &lt;chr&gt;,
+## #   perc_co2_solid_fuel &lt;chr&gt;, perc_co2_liquid_fuel &lt;chr&gt;,
+## #   co2_methane_equiv.energy_sector &lt;chr&gt;, co2_methane_equiv.agriculture &lt;chr&gt;,
+## #   co2_total_greenhouse_equiv &lt;chr&gt;, perc_safe_water &lt;chr&gt;,
+## #   hydro_electric_perc &lt;chr&gt;, coal_electric_perc &lt;chr&gt;,
+## #   natural_gas_electric_perc &lt;chr&gt;, nuclear_electric_perc &lt;chr&gt;,
+## #   oil_gas_coal_electric_perc &lt;chr&gt;, renewable_electric_nohydro_perc &lt;chr&gt;,
+## #   electric_consumption_percap &lt;chr&gt;, pop &lt;chr&gt;</code></pre>
+<pre class="r"><code>hydro_norway_s &lt;- hydro_data_subset %&gt;%
+filter(country_name == &quot;Germany&quot;)
+hydro_norway_s</code></pre>
+<pre><code>## # A tibble: 4 x 23
+##    time time_code country_name country_code co2_percap perc_elec gni_percap
+##   &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;        &lt;chr&gt;        &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;     
+## 1  2005 YR2005    Germany      DEU          9.6663722… 100       35710     
+## 2  2006 YR2006    Germany      DEU          9.9114760… 100       38230     
+## 3  2007 YR2007    Germany      DEU          9.4880398… 100       40440     
+## 4  2008 YR2008    Germany      DEU          9.5063211… 100       43570     
+## # … with 16 more variables: co2_emission &lt;chr&gt;, perc_co2_gaseous &lt;chr&gt;,
+## #   perc_co2_solid_fuel &lt;chr&gt;, perc_co2_liquid_fuel &lt;chr&gt;,
+## #   co2_methane_equiv.energy_sector &lt;chr&gt;, co2_methane_equiv.agriculture &lt;chr&gt;,
+## #   co2_total_greenhouse_equiv &lt;chr&gt;, perc_safe_water &lt;chr&gt;,
+## #   hydro_electric_perc &lt;chr&gt;, coal_electric_perc &lt;chr&gt;,
+## #   natural_gas_electric_perc &lt;chr&gt;, nuclear_electric_perc &lt;chr&gt;,
+## #   oil_gas_coal_electric_perc &lt;chr&gt;, renewable_electric_nohydro_perc &lt;chr&gt;,
+## #   electric_consumption_percap &lt;chr&gt;, pop &lt;chr&gt;</code></pre>
+<pre class="r"><code>hydro_norway_s &lt;- hydro_data_subset %&gt;%
+filter(country_name == &quot;United States&quot;)
+hydro_norway_s</code></pre>
+<pre><code>## # A tibble: 4 x 23
+##    time time_code country_name country_code co2_percap perc_elec gni_percap
+##   &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;        &lt;chr&gt;        &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;     
+## 1  2005 YR2005    United Stat… USA          19.591885… 100       46190     
+## 2  2006 YR2006    United Stat… USA          19.094066… 100       47880     
+## 3  2007 YR2007    United Stat… USA          19.217897… 100       48500     
+## 4  2008 YR2008    United Stat… USA          18.461763… 100       48980     
+## # … with 16 more variables: co2_emission &lt;chr&gt;, perc_co2_gaseous &lt;chr&gt;,
+## #   perc_co2_solid_fuel &lt;chr&gt;, perc_co2_liquid_fuel &lt;chr&gt;,
+## #   co2_methane_equiv.energy_sector &lt;chr&gt;, co2_methane_equiv.agriculture &lt;chr&gt;,
+## #   co2_total_greenhouse_equiv &lt;chr&gt;, perc_safe_water &lt;chr&gt;,
+## #   hydro_electric_perc &lt;chr&gt;, coal_electric_perc &lt;chr&gt;,
+## #   natural_gas_electric_perc &lt;chr&gt;, nuclear_electric_perc &lt;chr&gt;,
+## #   oil_gas_coal_electric_perc &lt;chr&gt;, renewable_electric_nohydro_perc &lt;chr&gt;,
+## #   electric_consumption_percap &lt;chr&gt;, pop &lt;chr&gt;</code></pre>
 </div>
 </div>
 
